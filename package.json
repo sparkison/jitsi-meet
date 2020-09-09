@@ -144,7 +144,9 @@
   "scripts": {
     "lint": "eslint . && flow",
     "postinstall": "jetify",
-    "validate": "npm ls"
+    "validate": "npm ls",
+    "build-ios-sdk": "xcodebuild -workspace ios/jitsi-meet.xcworkspace -scheme JitsiMeet -destination='generic/platform=iOS' -configuration Release archive && open ios/sdk/",
+    "build-android-sdk": "./android/scripts/release-sdk.sh /tmp/jitsi-local-repo && echo 'allprojects {\n    repositories {\n        maven { url \"file:/tmp/jitsi-local-repo\" }\n        google()\n        jcenter()\n    }\n}'"
   },
   "browser": {
     "jQuery-Impromptu": "jQuery-Impromptu/src/jquery-impromptu.js"
