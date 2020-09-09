@@ -1,4 +1,9 @@
-import groovy.json.JsonSlurper
+/**
+
+    NOTE: see following for information on re-enabling hermes:
+        https://github.com/jitsi/jitsi-meet/commit/306c8ba8c2e465314017a7f69f617e898ffc09c1
+
+*/
 
 apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
@@ -34,10 +39,6 @@ android {
                 exclude "test/"
             }
         }
-    }
-
-    packagingOptions {
-        pickFirst '**/libc++_shared.so'
     }
 }
 
@@ -229,12 +230,12 @@ publishing {
                 }
 
                 // Add Hermes dependency.
-                def hermesPkg = new File("$rootDir/../node_modules/hermes-engine/package.json")
-                def hermesVersion = new JsonSlurper().parseText(hermesPkg.text).version
-                def hermesDependency = dependencies.appendNode('dependency')
-                hermesDependency.appendNode('groupId', "com.facebook")
-                hermesDependency.appendNode('artifactId', "hermes")
-                hermesDependency.appendNode('version', hermesVersion)
+//                 def hermesPkg = new File("$rootDir/../node_modules/hermes-engine/package.json")
+//                 def hermesVersion = new JsonSlurper().parseText(hermesPkg.text).version
+//                 def hermesDependency = dependencies.appendNode('dependency')
+//                 hermesDependency.appendNode('groupId', "com.facebook")
+//                 hermesDependency.appendNode('artifactId', "hermes")
+//                 hermesDependency.appendNode('version', hermesVersion)
             }
         }
 
