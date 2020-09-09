@@ -20,7 +20,7 @@ export * from './actions.any';
 export function doInvitePeople() {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
-        const addPeopleEnabled = getFeatureFlag(state, ADD_PEOPLE_ENABLED, true)
+        const addPeopleEnabled = getFeatureFlag(state, ADD_PEOPLE_ENABLED, false)
             && (isAddPeopleEnabled(state) || isDialOutEnabled(state));
 
         if (addPeopleEnabled) {

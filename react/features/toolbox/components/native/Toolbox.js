@@ -15,6 +15,7 @@ import VideoMuteButton from '../VideoMuteButton';
 
 import OverflowMenuButton from './OverflowMenuButton';
 import styles from './styles';
+import ToggleCameraButton from './ToggleCameraButton'
 
 /**
  * The type of {@link Toolbox}'s React {@code Component} props.
@@ -104,17 +105,20 @@ class Toolbox extends PureComponent<Props> {
                 accessibilityRole = 'toolbar'
                 pointerEvents = 'box-none'
                 style = { styles.toolbar }>
-                <ChatButton
-                    styles = { buttonStylesBorderless }
-                    toggledStyles = { this._getChatButtonToggledStyle(toggledButtonStyles) } />
+                {/*<ChatButton*/}
+                {/*    styles = { buttonStylesBorderless }*/}
+                {/*    toggledStyles = { this._getChatButtonToggledStyle(toggledButtonStyles) } />*/}
+                <ToggleCameraButton
+                    styles = { buttonStyles }
+                    toggledStyles = { toggledButtonStyles } />
                 <AudioMuteButton
+                    styles = { buttonStyles }
+                    toggledStyles = { toggledButtonStyles } />
+                <VideoMuteButton
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />
                 <HangupButton
                     styles = { hangupButtonStyles } />
-                <VideoMuteButton
-                    styles = { buttonStyles }
-                    toggledStyles = { toggledButtonStyles } />
                 <OverflowMenuButton
                     styles = { buttonStylesBorderless }
                     toggledStyles = { toggledButtonStyles } />

@@ -81,26 +81,26 @@ class LonelyMeetingExperience extends PureComponent<Props> {
                     ] }>
                     { t('lonelyMeetingExperience.youAreAlone') }
                 </Text>
-                { !_isInviteFunctionsDiabled && (
-                    <TouchableOpacity
-                        onPress = { this._onPress }
-                        style = { [
-                            styles.lonelyButton,
-                            _styles.lonelyButton
-                        ] }>
-                        <Icon
-                            size = { 24 }
-                            src = { IconAddPeople }
-                            style = { styles.lonelyButtonComponents } />
-                        <Text
-                            style = { [
-                                styles.lonelyButtonComponents,
-                                _styles.lonelyMessage
-                            ] }>
-                            { t('lonelyMeetingExperience.button') }
-                        </Text>
-                    </TouchableOpacity>
-                ) }
+                {/*{ !_isInviteFunctionsDiabled && (*/}
+                {/*    <TouchableOpacity*/}
+                {/*        onPress = { this._onPress }*/}
+                {/*        style = { [*/}
+                {/*            styles.lonelyButton,*/}
+                {/*            _styles.lonelyButton*/}
+                {/*        ] }>*/}
+                {/*        <Icon*/}
+                {/*            size = { 24 }*/}
+                {/*            src = { IconAddPeople }*/}
+                {/*            style = { styles.lonelyButtonComponents } />*/}
+                {/*        <Text*/}
+                {/*            style = { [*/}
+                {/*                styles.lonelyButtonComponents,*/}
+                {/*                _styles.lonelyMessage*/}
+                {/*            ] }>*/}
+                {/*            { t('lonelyMeetingExperience.button') }*/}
+                {/*        </Text>*/}
+                {/*    </TouchableOpacity>*/}
+                {/*) }*/}
             </View>
         );
     }

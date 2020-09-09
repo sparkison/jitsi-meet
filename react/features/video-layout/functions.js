@@ -79,7 +79,7 @@ export function shouldDisplayTileView(state: Object = {}) {
     // But it's a special case too, as we don't even render the button,
     // see TileViewButton component.
     if (participantCount < 2) {
-        return false;
+        return true;
     }
 
     const { tileViewEnabled } = state['features/video-layout'];
@@ -106,7 +106,7 @@ export function shouldDisplayTileView(state: Object = {}) {
         || getPinnedParticipant(state)
 
         // It's a 1-on-1 meeting
-        || participantCount < 3
+        // || participantCount < 3
 
         // There is a shared YouTube video in the meeting
         || isYoutubeVideoPlaying(state)
