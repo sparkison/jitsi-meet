@@ -146,7 +146,7 @@
     "postinstall": "jetify",
     "validate": "npm ls",
     "build-ios-sdk": "xcodebuild -workspace ios/jitsi-meet.xcworkspace -scheme JitsiMeet -destination='generic/platform=iOS' -configuration Release archive && open ios/sdk/ && open node_modules/react-native-webrtc/ios",
-    "build-android-sdk": "./android/scripts/release-sdk.sh /tmp/jitsi-local-repo && echo 'allprojects {\n    repositories {\n        maven { url \"file:/tmp/jitsi-local-repo\" }\n        google()\n        jcenter()\n    }\n}'"
+    "build-android-sdk": "sh ./android/scripts/release-sdk.sh /tmp/maven/repos/jitsi-sdk-maven && open /tmp/maven/repos"
   },
   "browser": {
     "jQuery-Impromptu": "jQuery-Impromptu/src/jquery-impromptu.js"
