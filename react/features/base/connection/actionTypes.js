@@ -44,6 +44,16 @@ export const CONNECTION_FAILED = 'CONNECTION_FAILED';
 export const CONNECTION_WILL_CONNECT = 'CONNECTION_WILL_CONNECT';
 
 /**
+ * The type of (redux) action which signals that external action was called.
+ *
+ * {
+ *     type: EXTERNAL_ACTION_CALL,
+ *     call: Object
+ * }
+ */
+export const EXTERNAL_ACTION_CALL = 'EXTERNAL_ACTION_CALL'
+
+/**
  * The type of (redux) action which sets the location URL of the application,
  * connection, conference, etc.
  *

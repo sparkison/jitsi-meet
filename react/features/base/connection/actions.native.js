@@ -16,7 +16,8 @@ import {
     CONNECTION_ESTABLISHED,
     CONNECTION_FAILED,
     CONNECTION_WILL_CONNECT,
-    SET_LOCATION_URL
+    SET_LOCATION_URL,
+    EXTERNAL_ACTION_CALL,
 } from './actionTypes';
 import { JITSI_CONNECTION_URL_KEY } from './constants';
 import logger from './logger';
@@ -189,6 +190,22 @@ export function connectionDisconnected(connection: Object) {
     return {
         type: CONNECTION_DISCONNECTED,
         connection
+    };
+}
+
+/**
+ * Create an action for when an external action is called.
+ *
+ * @private
+ * @returns {{
+ *     type: EXTERNAL_ACTION_CALL,
+ *     call: Object
+ * }}
+ */
+export function externalActionCall(call: Object) {
+    return {
+        type: EXTERNAL_ACTION_CALL,
+        call
     };
 }
 

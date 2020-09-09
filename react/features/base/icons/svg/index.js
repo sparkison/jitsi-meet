@@ -46,6 +46,7 @@ export { default as IconHangup } from './hangup.svg';
 export { default as IconHelp } from './help.svg';
 export { default as IconInfo } from './info.svg';
 export { default as IconInviteMore } from './user-plus.svg';
+export { default as IconInviteMoreDark } from './user-plus-dark.svg';
 export { default as IconKick } from './kick.svg';
 export { default as IconLiveStreaming } from './public.svg';
 export { default as IconMeetingLocked } from './meeting-locked.svg';

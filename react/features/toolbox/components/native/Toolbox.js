@@ -16,6 +16,7 @@ import VideoMuteButton from '../VideoMuteButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import styles from './styles';
 import ToggleCameraButton from './ToggleCameraButton'
+import CustomActionCallButton from './CustomActionCallButton'
 
 /**
  * The type of {@link Toolbox}'s React {@code Component} props.
@@ -100,6 +101,12 @@ class Toolbox extends PureComponent<Props> {
         const { _styles } = this.props;
         const { buttonStyles, buttonStylesBorderless, hangupButtonStyles, toggledButtonStyles } = _styles;
 
+        // Define what to send when calling external action
+        const INVITE_USER_EXTERNAL = {
+            action: "invite_user",
+            data: {}
+        }
+
         return (
             <View
                 accessibilityRole = 'toolbar'
@@ -108,6 +115,10 @@ class Toolbox extends PureComponent<Props> {
                 {/*<ChatButton*/}
                 {/*    styles = { buttonStylesBorderless }*/}
                 {/*    toggledStyles = { this._getChatButtonToggledStyle(toggledButtonStyles) } />*/}
+                <CustomActionCallButton {...this.props}
+                    styles = { buttonStylesBorderless }
+                    callAction={ INVITE_USER_EXTERNAL }
+                    toggledStyles = { toggledButtonStyles } />
                 <ToggleCameraButton
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />
