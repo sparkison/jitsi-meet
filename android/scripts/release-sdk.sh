@@ -2,6 +2,12 @@
 
 set -e -u
 
+################################################################################
+# NOTE: see following for information on re-enabling hermes:
+#    https://github.com/jitsi/jitsi-meet/commit/306c8ba8c2e465314017a7f69f617e898ffc09c1
+#
+# You will also need to edit ./android/sdk/build.gradle
+################################################################################
 
 THIS_DIR=$(cd -P "$(dirname "$(readlink "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)
 DEFAULT_MVN_REPO="${THIS_DIR}/../../../jitsi-maven-repository/releases"
@@ -10,7 +16,8 @@ MVN_HTTP=0
 DEFAULT_SDK_VERSION=$(grep sdkVersion ${THIS_DIR}/../gradle.properties | cut -d"=" -f2)
 SDK_VERSION=${OVERRIDE_SDK_VERSION:-${DEFAULT_SDK_VERSION}}
 RN_VERSION=$(jq -r '.version' ${THIS_DIR}/../../node_modules/react-native/package.json)
-HERMES_VERSION=$(jq -r '.dependencies."hermes-engine"' ${THIS_DIR}/../../node_modules/react-native/package.json | cut -c 2-)
+JSC_VERSION="r"$(jq -r '.dependencies."jsc-android"' ${THIS_DIR}/../../node_modules/react-native/package.json | cut -d . -f 1 | cut -c 2-)
+# HERMES_VERSION=$(jq -r '.dependencies."hermes-engine"' ${THIS_DIR}/../../node_modules/react-native/package.json | cut -c 2-)
 DO_GIT_TAG=${GIT_TAG:-0}
 
 if [[ $THE_MVN_REPO == http* ]]; then
@@ -39,18 +46,30 @@ if [[ $MVN_HTTP == 1 ]]; then
         -DpomFile=react-native-${RN_VERSION}.pom || true
     popd
     # Push Hermes
-    echo "Pushing Hermes ${HERMES_VERSION} to the Maven repo"
-    pushd ${THIS_DIR}/../../node_modules/hermes-engine/android/
+    #    echo "Pushing Hermes ${HERMES_VERSION} to the Maven repo"
+    #    pushd ${THIS_DIR}/../../node_modules/hermes-engine/android/
+    #    mvn \
+    #        deploy:deploy-file \
+    #        -Durl=${MVN_REPO} \
+    #        -DrepositoryId=${MVN_REPO_ID} \
+    #        -Dfile=hermes-release.aar \
+    #        -Dpackaging=aar \
+    #        -DgroupId=com.facebook \
+    #        -DartifactId=hermes \
+    #        -Dversion=${HERMES_VERSION} \
+    #        -DgeneratePom=true || true
+    #    popd
+    # Push JSC
+    echo "Pushing JSC ${JSC_VERSION} to the Maven repo"
+    pushd ${THIS_DIR}/../../node_modules/jsc-android/dist/org/webkit/android-jsc/${JSC_VERSION}
     mvn \
         deploy:deploy-file \
         -Durl=${MVN_REPO} \
         -DrepositoryId=${MVN_REPO_ID} \
-        -Dfile=hermes-release.aar \
+        -Dfile=android-jsc-${JSC_VERSION}.aar \
         -Dpackaging=aar \
-        -DgroupId=com.facebook \
-        -DartifactId=hermes \
-        -Dversion=${HERMES_VERSION} \
-        -DgeneratePom=true || true
+        -DgeneratePom=false \
+        -DpomFile=android-jsc-${JSC_VERSION}.pom || true
     popd
 else
     # Push React Native, if necessary
@@ -68,18 +87,31 @@ else
     fi
 
     # Push Hermes, if necessary
-    if [[ ! -d ${MVN_REPO}/com/facebook/hermes/${HERMES_VERSION} ]]; then
-        echo "Pushing Hermes ${HERMES_VERSION} to the Maven repo"
-        pushd ${THIS_DIR}/../../node_modules/hermes-engine/android/
+    #    if [[ ! -d ${MVN_REPO}/com/facebook/hermes/${HERMES_VERSION} ]]; then
+    #        echo "Pushing Hermes ${HERMES_VERSION} to the Maven repo"
+    #        pushd ${THIS_DIR}/../../node_modules/hermes-engine/android/
+    #        mvn \
+    #            deploy:deploy-file \
+    #            -Durl=${MVN_REPO} \
+    #            -Dfile=hermes-release.aar \
+    #            -Dpackaging=aar \
+    #            -DgroupId=com.facebook \
+    #            -DartifactId=hermes \
+    #            -Dversion=${HERMES_VERSION} \
+    #            -DgeneratePom=true
+    #        popd
+    #    fi
+    # Push JSC, if necessary
+    if [[ ! -d ${MVN_REPO}/org/webkit/android-jsc/${JSC_VERSION} ]]; then
+        echo "Pushing JSC ${JSC_VERSION} to the Maven repo"
+        pushd ${THIS_DIR}/../../node_modules/jsc-android/dist/org/webkit/android-jsc/${JSC_VERSION}
         mvn \
             deploy:deploy-file \
             -Durl=${MVN_REPO} \
-            -Dfile=hermes-release.aar \
+            -Dfile=android-jsc-${JSC_VERSION}.aar \
             -Dpackaging=aar \
-            -DgroupId=com.facebook \
-            -DartifactId=hermes \
-            -Dversion=${HERMES_VERSION} \
-            -DgeneratePom=true
+            -DgeneratePom=false \
+            -DpomFile=android-jsc-${JSC_VERSION}.pom
         popd
     fi
 
