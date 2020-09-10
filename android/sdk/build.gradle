@@ -1,12 +1,9 @@
-/**
-
-    NOTE: see following for information on re-enabling hermes:
-        https://github.com/jitsi/jitsi-meet/commit/306c8ba8c2e465314017a7f69f617e898ffc09c1
-
-*/
-
 apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
+
+project.ext.react = [
+    enableHermes: false,  // clean and rebuild if changing
+]
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -19,13 +16,11 @@ android {
     buildTypes {
         debug {
             buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
-            buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${rootProject.ext.googleServicesEnabled}"
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
-            buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${rootProject.ext.googleServicesEnabled}"
         }
     }
 
@@ -51,11 +46,12 @@ dependencies {
 
     //noinspection GradleDynamicVersion
     api 'com.facebook.react:react-native:+'
+    //noinspection GradleDynamicVersion
+    implementation 'org.webkit:android-jsc:+'
 
-    // Hermes JS engine
-    // def hermesPath = "../../node_modules/hermes-engine/android/"
-    // debugImplementation files(hermesPath + "hermes-debug.aar")
-    // releaseImplementation files(hermesPath + "hermes-release.aar")
+    // Fix for Soloader looking for hermes
+    // info: https://github.com/facebook/SoLoader/issues/55
+    implementation 'com.facebook.soloader:soloader:0.9.0+'
 
     implementation 'com.dropbox.core:dropbox-core-sdk:3.0.8'
     implementation 'com.jakewharton.timber:timber:4.7.1'
@@ -73,7 +69,6 @@ dependencies {
     implementation project(':react-native-calendar-events')
     implementation project(':react-native-community-async-storage')
     implementation project(':react-native-community_netinfo')
-    implementation project(':react-native-default-preference')
     implementation project(':react-native-immersive')
     implementation project(':react-native-keep-awake')
     implementation project(':react-native-linear-gradient')
@@ -228,14 +223,6 @@ publishing {
                     dependency.appendNode('artifactId', artifactId)
                     dependency.appendNode('version', it.moduleVersion)
                 }
-
-                // Add Hermes dependency.
-                // def hermesPkg = new File("$rootDir/../node_modules/hermes-engine/package.json")
-                // def hermesVersion = new JsonSlurper().parseText(hermesPkg.text).version
-                // def hermesDependency = dependencies.appendNode('dependency')
-                // hermesDependency.appendNode('groupId', "com.facebook")
-                // hermesDependency.appendNode('artifactId', "hermes")
-                // hermesDependency.appendNode('version', hermesVersion)
             }
         }
 
@@ -252,3 +239,4 @@ publishing {
         }
     }
 }
+

@@ -1,10 +1,16 @@
 apply plugin: 'com.android.application'
 
+def googleServicesEnabled = false
+
 // Crashlytics integration is done as part of Firebase now, so it gets
 // automagically activated with google-services.json
 if (googleServicesEnabled) {
     apply plugin: 'io.fabric'
 }
+
+project.ext.react = [
+    enableHermes: false,  // clean and rebuild if changing
+]
 
 // Use the number of seconds/10 since Jan 1 2019 as the versionCode.
 // This lets us upload a new build at most every 10 seconds for the
