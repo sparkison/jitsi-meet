@@ -239,7 +239,7 @@ class Conference extends AbstractConference<Props, *> {
             _shouldDisplayTileView,
             _toolboxVisible
         } = this.props;
-        const showGradient = _toolboxVisible;
+        const showGradient = false;
         const applyGradientStretching
             = _filmstripVisible && _aspectRatio === ASPECT_RATIO_NARROW && !_shouldDisplayTileView;
 

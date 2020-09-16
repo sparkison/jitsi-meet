@@ -17,6 +17,7 @@ import OverflowMenuButton from './OverflowMenuButton';
 import styles from './styles';
 import ToggleCameraButton from './ToggleCameraButton'
 import CustomActionCallButton from './CustomActionCallButton'
+import {getLocalParticipant, getParticipantDisplayName} from '../../../base/participants'
 
 /**
  * The type of {@link Toolbox}'s React {@code Component} props.
@@ -103,8 +104,7 @@ class Toolbox extends PureComponent<Props> {
 
         // Define what to send when calling external action
         const INVITE_USER_EXTERNAL = {
-            action: "invite_user",
-            data: {}
+            action: "invite_user"
         }
 
         return (
@@ -118,6 +118,9 @@ class Toolbox extends PureComponent<Props> {
                 <CustomActionCallButton {...this.props}
                     styles = { buttonStylesBorderless }
                     callAction={ INVITE_USER_EXTERNAL }
+                    participants={this.props._participants}
+                    displayName={this.props._displayName}
+                    localParticipantId={this.props._localParticipantId}
                     toggledStyles = { toggledButtonStyles } />
                 <ToggleCameraButton
                     styles = { buttonStyles }
@@ -125,9 +128,9 @@ class Toolbox extends PureComponent<Props> {
                 <AudioMuteButton
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />
-                <VideoMuteButton
-                    styles = { buttonStyles }
-                    toggledStyles = { toggledButtonStyles } />
+                {/*<VideoMuteButton*/}
+                {/*    styles = { buttonStyles }*/}
+                {/*    toggledStyles = { toggledButtonStyles } />*/}
                 <HangupButton
                     styles = { hangupButtonStyles } />
                 <OverflowMenuButton
@@ -148,9 +151,15 @@ class Toolbox extends PureComponent<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state: Object): Object {
+    const _localParticipant = getLocalParticipant(state);
+    const _localParticipantId = _localParticipant?.id;
+    const _displayName = _localParticipant && getParticipantDisplayName(state, _localParticipantId);
     return {
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
-        _visible: isToolboxVisible(state)
+        _visible: isToolboxVisible(state),
+        _participants: state['features/base/participants'],
+        _displayName,
+        _localParticipantId,
     };
 }
 

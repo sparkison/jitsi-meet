@@ -55,4 +55,12 @@
  */
 - (void)enterPictureInPicture:(NSDictionary *)data;
 
+/**
+ * Called whenever a custom action is sent.
+ *
+ * The `data` dictionary contains a `url` key with the conference URL
+ * and `call` key with action details.
+ */
+- (void)externalActionCall:(NSDictionary *)data;
+
 @end

@@ -180,6 +180,11 @@ public class MainActivity extends JitsiMeetActivity {
         Log.d(TAG, "Conference terminated: " + data);
     }
 
+    @Override
+    public void onExternalActionCall(Map<String, Object> data) {
+        Log.d(TAG, "External action called: " + data);
+    }
+
     // Activity lifecycle method overrides
     //
 

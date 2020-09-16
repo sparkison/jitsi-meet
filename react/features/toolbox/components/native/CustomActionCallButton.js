@@ -1,9 +1,9 @@
 // @flow
 
-import {translate} from '../../../base/i18n'
 import {IconInviteMoreDark} from '../../../base/icons'
 import {AbstractButton, type AbstractButtonProps} from '../../../base/toolbox/components'
 import {externalActionCall} from '../../../base/connection'
+import { connect } from '../../../base/redux';
 
 /**
  * The type of the React {@code Component} props of {@link AudioOnlyButton}.
@@ -18,7 +18,22 @@ type Props = AbstractButtonProps & {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function
+    dispatch: Function,
+
+    /**
+     * The local participants
+     */
+    participants: Array<any>,
+
+    /**
+     * Display name of user who initiated action
+     */
+    displayName: string,
+
+    /**
+     * ID of user who initiated action
+     */
+    localParticipantId: string,
 };
 
 /**
@@ -37,9 +52,13 @@ class CustomActionCallButton extends AbstractButton<Props, any> {
      * @returns {void}
      */
     _handleClick () {
-        this.props.dispatch(externalActionCall(this.props.callAction))
+        this.props.dispatch(externalActionCall(
+            this.props.callAction,
+            this.props.localParticipantId,
+            this.props.displayName)
+        )
     }
 
 }
 
-export default translate(CustomActionCallButton)
+export default connect()(CustomActionCallButton);

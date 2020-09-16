@@ -200,12 +200,16 @@ export function connectionDisconnected(connection: Object) {
  * @returns {{
  *     type: EXTERNAL_ACTION_CALL,
  *     call: Object
+ *     participantId: string
+ *     displayName: string
  * }}
  */
-export function externalActionCall(call: Object) {
+export function externalActionCall(call: Object, participantId: string, displayName: string) {
     return {
         type: EXTERNAL_ACTION_CALL,
-        call
+        call,
+        participantId,
+        displayName
     };
 }
 

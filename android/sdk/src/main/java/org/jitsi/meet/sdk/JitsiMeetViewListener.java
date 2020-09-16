@@ -47,4 +47,12 @@ public interface JitsiMeetViewListener {
      * @param data Map with a "url" key with the conference URL.
      */
     void onConferenceWillJoin(Map<String, Object> data);
+
+
+    /**
+     * Called when custom action is pressed.
+     *
+     * @param data Map with a "type" key for the custom action type and "data" key with additional info.
+     */
+    void onExternalActionCall(Map<String, Object> data);
 }

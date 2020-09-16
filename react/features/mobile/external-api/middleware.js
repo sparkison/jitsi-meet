@@ -16,8 +16,9 @@ import {
     CONNECTION_FAILED,
     JITSI_CONNECTION_CONFERENCE_KEY,
     JITSI_CONNECTION_URL_KEY,
-    getURLWithoutParams
-} from '../../base/connection';
+    EXTERNAL_ACTION_CALL,
+    getURLWithoutParams,
+} from '../../base/connection'
 import { MiddlewareRegistry } from '../../base/redux';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
@@ -39,6 +40,7 @@ const CONFERENCE_TERMINATED = 'CONFERENCE_TERMINATED';
 MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
     const { type } = action;
+    const { getState } = store;
 
     switch (type) {
     case CONFERENCE_FAILED: {
@@ -110,6 +112,22 @@ MiddlewareRegistry.register(store => next => action => {
             });
         break;
     }
+
+    case EXTERNAL_ACTION_CALL:
+        const {
+            call,
+            participantId,
+            displayName
+        } = action
+        sendEvent(
+            store,
+            EXTERNAL_ACTION_CALL,
+            /* data */ {
+                call,
+                participantId,
+                displayName
+            });
+        break;
 
     case SET_ROOM:
         _maybeTriggerEarlyConferenceWillJoin(store, action);
