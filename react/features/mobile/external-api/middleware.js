@@ -123,7 +123,7 @@ MiddlewareRegistry.register(store => next => action => {
             store,
             EXTERNAL_ACTION_CALL,
             /* data */ {
-                call,
+                call: JSON.stringify(call),
                 participantId,
                 displayName
             });
