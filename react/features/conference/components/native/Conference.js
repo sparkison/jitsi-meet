@@ -267,10 +267,10 @@ class Conference extends AbstractConference<Props, *> {
                   * The activity/loading indicator goes above everything, except
                   * the toolbox/toolbars and the dialogs.
                   */
-                    _connecting
-                        && <TintedView>
-                            <LoadingIndicator />
-                        </TintedView>
+                    // _connecting
+                    //     && <TintedView>
+                    //         <LoadingIndicator />
+                    //     </TintedView>
                 }
 
                 <SafeAreaView
@@ -350,12 +350,12 @@ class Conference extends AbstractConference<Props, *> {
             <>
                 <LargeVideo onClick = { this._onClick } />
 
-                {
-                    _connecting
-                        && <TintedView>
-                            <LoadingIndicator />
-                        </TintedView>
-                }
+                {/*{*/}
+                {/*    _connecting*/}
+                {/*        && <TintedView>*/}
+                {/*            <LoadingIndicator />*/}
+                {/*        </TintedView>*/}
+                {/*}*/}
             </>
         );
     }

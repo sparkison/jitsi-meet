@@ -348,7 +348,7 @@ var config = {
 
     // Whether to use a welcome page or not. In case it's false a random room
     // will be joined when no room is specified.
-    enableWelcomePage: true,
+    enableWelcomePage: false,
 
     // Enabling the close page will ignore the welcome page redirection when
     // a call is hangup.
@@ -384,7 +384,7 @@ var config = {
     // enableCalendarIntegration: false,
 
     // When 'true', it shows an intermediate page before joining, where the user can configure their devices.
-    // prejoinPageEnabled: false,
+    prejoinPageEnabled: true,
 
     // If true, shows the unsafe room name warning label when a room name is
     // deemed unsafe (due to the simplicity in the name) and a password is not
@@ -583,10 +583,10 @@ var config = {
     // Mainly privacy related settings
 
     // Disables all invite functions from the app (share, invite, dial out...etc)
-    // disableInviteFunctions: true,
+    disableInviteFunctions: true,
 
     // Disables storing the room name to the recents list
-    // doNotStoreRoom: true,
+    doNotStoreRoom: true,
 
     // Deployment specific URLs.
     // deploymentUrls: {
