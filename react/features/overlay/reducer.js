@@ -14,19 +14,31 @@ import {
  * FIXME: these pieces of state should probably be in a different place.
  */
 ReducerRegistry.register('features/overlay', (state = { }, action) => {
+    // switch (action.type) {
+    //     case CONFIG_WILL_LOAD:
+    //         return _setShowLoadConfigOverlay(state, Boolean(action.room));
+    //
+    //     case LOAD_CONFIG_ERROR:
+    //     case SET_CONFIG:
+    //         return _setShowLoadConfigOverlay(false);
+    //
+    //     case MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED:
+    //         return _mediaPermissionPromptVisibilityChanged(state, action);
+    //
+    //     case SET_FATAL_ERROR:
+    //         return _setFatalError(state, action);
+    //
+    // }
     switch (action.type) {
-    case CONFIG_WILL_LOAD:
-        return _setShowLoadConfigOverlay(state, Boolean(action.room));
+        case CONFIG_WILL_LOAD:
+        case LOAD_CONFIG_ERROR:
+        case SET_CONFIG:
+        case MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED:
+            // LDS Override: We don't want to have an overlay on top of the screen, set this to false always
+            return _setShowLoadConfigOverlay(false);
 
-    case LOAD_CONFIG_ERROR:
-    case SET_CONFIG:
-        return _setShowLoadConfigOverlay(false);
-
-    case MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED:
-        return _mediaPermissionPromptVisibilityChanged(state, action);
-
-    case SET_FATAL_ERROR:
-        return _setFatalError(state, action);
+        case SET_FATAL_ERROR:
+            return _setFatalError(state, action);
 
     }
 

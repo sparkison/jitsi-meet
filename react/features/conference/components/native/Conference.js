@@ -435,7 +435,7 @@ function _mapStateToProps(state) {
     // - the XMPP connection is connected and we have no conference yet, nor we
     //   are leaving one.
     const connecting_
-        = connecting || (connection && (!membersOnly && (joining || (!conference && !leaving))));
+        = connecting || (connection && (!membersOnly && (!conference && !leaving)));
 
     return {
         ...abstractMapStateToProps(state),
