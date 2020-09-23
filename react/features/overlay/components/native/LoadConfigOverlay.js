@@ -39,7 +39,10 @@ class LoadConfigOverlay extends Component<Props> {
      * {@code false}, otherwise.
      */
     static needsRender(state: Object) {
-        return Boolean(state['features/overlay'].loadConfigOverlayVisible);
+        // LDS Override: We don't want to have an overlay on top of the screen, set this to false always
+        return Boolean(false);
+
+        // return Boolean(state['features/overlay'].loadConfigOverlayVisible);
     }
 
     /**
