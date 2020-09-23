@@ -58,7 +58,7 @@ type Props = {
  * @private
  * @type {number}
  */
-const MARGIN = 10;
+const MARGIN = 0;
 
 /**
  * The aspect ratio the tiles should display in.

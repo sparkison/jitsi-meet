@@ -83,14 +83,14 @@ export default {
     thumbnail: {
         alignItems: 'stretch',
         backgroundColor: ColorPalette.appBackground,
-        borderColor: '#424242',
-        borderRadius: 3,
+        borderColor: '#333',
+        borderRadius: 0,
         borderStyle: 'solid',
-        borderWidth: 1,
+        borderWidth: 2,
         flex: 1,
         height: 80,
         justifyContent: 'center',
-        margin: 2,
+        margin: 0,
         overflow: 'hidden',
         position: 'relative',
         width: 80

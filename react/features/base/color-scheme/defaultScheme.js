@@ -47,14 +47,14 @@ export default {
         background: 'rgb(249, 249, 249)'
     },
     'Thumbnail': {
-        activeParticipantHighlight: 'rgb(81, 214, 170)',
-        activeParticipantTint: 'rgba(49, 183, 106, 0.3)',
+        activeParticipantHighlight: 'rgb(254, 225, 137)',
+        activeParticipantTint: 'rgba(254, 225, 137, 0.3)',
         background: 'rgb(94, 109, 122)'
     },
     'Toolbox': {
         button: 'rgb(255, 255, 255)',
-        buttonToggled: 'rgb(38, 58, 76)',
-        buttonToggledBorder: getRGBAFormat('#a4b8d1', 0.6),
+        buttonToggled: 'rgb(61, 165, 120)',
+        buttonToggledBorder: getRGBAFormat('#3DA578', 0.6),
         hangup: 'rgb(225, 45, 45)'
     }
 };

@@ -116,7 +116,7 @@ class Toolbox extends PureComponent<Props> {
                 {/*    styles = { buttonStylesBorderless }*/}
                 {/*    toggledStyles = { this._getChatButtonToggledStyle(toggledButtonStyles) } />*/}
                 <CustomActionCallButton {...this.props}
-                    styles = { buttonStylesBorderless }
+                    styles = { buttonStyles }
                     callAction={ INVITE_USER_EXTERNAL }
                     participants={this.props._participants}
                     displayName={this.props._displayName}

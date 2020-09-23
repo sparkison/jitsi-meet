@@ -1,6 +1,6 @@
 // @flow
 
-import {IconInviteMoreDark} from '../../../base/icons'
+import {IconInviteMore} from '../../../base/icons'
 import {AbstractButton, type AbstractButtonProps} from '../../../base/toolbox/components'
 import {externalActionCall} from '../../../base/connection'
 import { connect } from '../../../base/redux';
@@ -41,7 +41,7 @@ type Props = AbstractButtonProps & {
  */
 class CustomActionCallButton extends AbstractButton<Props, any> {
     accessibilityLabel = 'addPeople.inviteMorePrompt'
-    icon = IconInviteMoreDark
+    icon = IconInviteMore
     label = 'addPeople.inviteMorePrompt'
 
     /**
