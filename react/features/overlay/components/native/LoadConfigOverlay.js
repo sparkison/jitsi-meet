@@ -52,6 +52,8 @@ class LoadConfigOverlay extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
+        return null
+
         const { _styles } = this.props;
 
         return (
