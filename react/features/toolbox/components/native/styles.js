@@ -3,7 +3,7 @@
 import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
 import { BoxModel, ColorPalette } from '../../../base/styles';
 
-const BUTTON_SIZE = 46;
+const BUTTON_SIZE = 50;
 
 // Toolbox, toolbar:
 

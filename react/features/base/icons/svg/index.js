@@ -103,3 +103,10 @@ export { default as IconWifi1Bar } from './wifi-1.svg';
 export { default as IconWifi2Bars } from './wifi-2.svg';
 export { default as IconWifi3Bars } from './wifi-3.svg';
 export { default as IconYahoo } from './yahoo.svg';
+
+// Custom icons
+export { default as AddUser } from './add-user.svg';
+export { default as EndCall } from './end-call.svg';
+export { default as FlipScreen } from './flip-screen.svg';
+export { default as MuteMic } from './mute.svg';
+export { default as UnMuteMic } from './unmute.svg';
