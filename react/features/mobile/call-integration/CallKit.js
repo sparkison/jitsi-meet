@@ -24,7 +24,8 @@ import { getName } from '../../app/functions';
  * All events get a `data` object with a `callUUID` property, unless stated
  * otherwise.
  */
-let CallKit = NativeModules.RNCallKit;
+// let CallKit = NativeModules.RNCallKit;
+let CallKit = null
 
 // XXX Rather than wrapping RNCallKit in a new class and forwarding the many
 // methods of the latter to the former, add the one additional method that we
