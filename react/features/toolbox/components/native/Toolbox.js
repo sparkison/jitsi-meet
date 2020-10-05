@@ -7,11 +7,11 @@ import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { Container } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
-import { ChatButton } from '../../../chat';
+// import { ChatButton } from '../../../chat';
 import { isToolboxVisible } from '../../functions';
 import AudioMuteButton from '../AudioMuteButton';
 import HangupButton from '../HangupButton';
-import VideoMuteButton from '../VideoMuteButton';
+// import VideoMuteButton from '../VideoMuteButton';
 
 import OverflowMenuButton from './OverflowMenuButton';
 import styles from './styles';

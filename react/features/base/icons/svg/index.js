@@ -110,3 +110,4 @@ export { default as EndCall } from './end-call.svg';
 export { default as FlipScreen } from './flip-screen.svg';
 export { default as MuteMic } from './mute.svg';
 export { default as UnMuteMic } from './unmute.svg';
+export { default as TakeAShot } from './take-shot.svg';
