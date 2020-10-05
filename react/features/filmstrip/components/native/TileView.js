@@ -237,10 +237,20 @@ class TileView extends Component<Props> {
      * @returns {ReactElement[]}
      */
     _renderThumbnails() {
+        const participantCount = this.props._participants.length;
+        const { _height, _width } = this.props
+        // const styleOverrides = {
+        //     aspectRatio: TILE_ASPECT_RATIO,
+        //     flex: 0,
+        //     height: this._getTileDimensions().height,
+        //     width: null
+        // };
+
+        // LDS - customize the aspect ratio so we can fill the entire screen
+        const ratio = participantCount > 1 ? 2 : 1
         const styleOverrides = {
-            aspectRatio: TILE_ASPECT_RATIO,
-            flex: 0,
-            height: this._getTileDimensions().height,
+            aspectRatio: participantCount > 2 ? 0.5 : 1,
+            height: _height / ratio,
             width: null
         };
 
