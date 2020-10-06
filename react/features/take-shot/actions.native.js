@@ -27,16 +27,19 @@ export function takeShotPrompt (call: Object, participantId: string, displayName
  *
  * @param participantId
  * @param displayName
+ * @param visible
  * @returns {{
  *      type: string,
  *      participantId: string,
- *      displayName: string
+ *      displayName: string,
+ *      show: boolean
  * }}
  */
-export function toggleTakeShotAnimation (participantId: string, displayName: string) {
+export function toggleTakeShotAnimation (participantId: string, displayName: string, visible: boolean) {
     return {
         type: DISPLAY_TAKE_A_SHOT_ANIMATION,
         participantId,
-        displayName
+        displayName,
+        visible
     }
 }

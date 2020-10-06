@@ -9,10 +9,9 @@ import {connect} from '../../../base/redux'
 import {StyleType} from '../../../base/styles'
 import styles from './styles'
 import {getLocalParticipant, getParticipantDisplayName} from '../../../base/participants'
-import {isToolboxVisible} from '../../../toolbox/functions.native'
 import {TakeAShotClank, TakeAShotLeft, TakeAShotRight} from '../../../base/icons'
-import {isTakeShotOverlayVisible} from '../../functions.native'
-import {takeShotPrompt} from '../../actions.native'
+import {isTakeShotActionButtonVisible, isTakeShotOverlayVisible} from '../../functions.native'
+import {takeShotPrompt, toggleTakeShotAnimation} from '../../actions.native'
 
 /**
  * The type of {@link TakeShot}'s React {@code Component} props.
@@ -75,6 +74,23 @@ class TakeShot extends PureComponent<Props> {
         })
     }
 
+    componentWillReceiveProps (nextProps: Props, nextContext: *): * {
+        // return super.componentWillReceiveProps(nextProps, nextContext)
+        const { _takeShotOverlayVisible } = nextProps
+        if (_takeShotOverlayVisible) {
+            this.resetState()
+            this.runAnimation()
+            setTimeout(() => {
+                // Hide the overlay
+                this.props.dispatch(toggleTakeShotAnimation(
+                    this.props._localParticipantId,
+                    this.props._displayName,
+                    false
+                ))
+            }, 2000) // How long before auto-hide the larger overlay?
+        }
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -82,18 +98,19 @@ class TakeShot extends PureComponent<Props> {
      * @returns {ReactElement}
      */
     render () {
+        const containerStyle = {
+            left: 0,
+            position: 'absolute',
+            right: 0,
+            top: 10,
+            height: "100%",
+            justifyContent: "center"
+        }
         return (
             <Container
-                style={{
-                    left: 0,
-                    position: 'absolute',
-                    right: 0,
-                    top: 10,
-                    height: "100%",
-                    justifyContent: "center"
-                }}
-                visible={this.props._visible}>
-                {this._renderToolbar()}
+                style={containerStyle}
+                visible={this.props._visible || this.props._takeShotOverlayVisible}>
+                {this._renderTakeAShotView()}
             </Container>
         )
     }
@@ -163,7 +180,9 @@ class TakeShot extends PureComponent<Props> {
                     )
                 ])
             ]),
-        ]).start()
+        ]).start(({ finished }) => {
+            // ...
+        })
     }
 
     /**
@@ -174,7 +193,7 @@ class TakeShot extends PureComponent<Props> {
      * @param margin
      * @returns {*}
      */
-    animatedView(
+    animatedView (
         containerSize = 80,
         iconSize = 60,
         margin = 8
@@ -257,28 +276,28 @@ class TakeShot extends PureComponent<Props> {
     }
 
     /**
-     * Renders the toolbar. In order to avoid a weird visual effect in which the
+     * Renders the action button. In order to avoid a weird visual effect in which the
      * toolbar is (visually) rendered and then visibly changes its size, it is
      * rendered only after we've figured out the width available to the toolbar.
      *
      * @returns {React$Node}
      */
-    _renderToolbar () {
+    _renderTakeAShotView () {
         // Define what to send when calling external action
         const TAKE_SHOT_EXTERNAL = {
             action: "take_shot"
         }
 
+        // Is this the overlay or the action?
+        const isOverlay = this.props._takeShotOverlayVisible
+
         // Some padding/margin constants to retain the image
         const margin = 8
-        const containerSize = 80
-        const iconSize = 60
+        const containerSize = isOverlay ? 140 : 80
+        const iconSize = isOverlay ? 120 : 60
 
         // Run initial animation
         this.runAnimation()
-
-        // Debug
-        __DEV__ && console.log(`${this.props._displayName} received prompt to take a shot!`)
 
         // Return the main component
         return (
@@ -289,18 +308,20 @@ class TakeShot extends PureComponent<Props> {
                 <TouchableOpacity
                     activeOpacity={1} // don't fade on press, we're animating!
                     onPress={() => {
-                        this.resetState()
-                        this.runAnimation()
-                        this.props.dispatch(takeShotPrompt(TAKE_SHOT_EXTERNAL,
-                            this.props._localParticipantId,
-                            this.props._displayName
-                        ))
+                        if (!isOverlay) {
+                            this.resetState()
+                            this.runAnimation()
+                            this.props.dispatch(takeShotPrompt(TAKE_SHOT_EXTERNAL,
+                                this.props._localParticipantId,
+                                this.props._displayName
+                            ))
+                        }
                     }}
                     style={{
                         width: containerSize,
                         height: containerSize,
-                        borderRadius: 40,
-                        backgroundColor: "#fff",
+                        borderRadius: isOverlay ? 100 : 40,
+                        backgroundColor: isOverlay ? "rgba(255,255,255,0.6)" : "#fff",
                         borderColor: "#333",
                         borderWidth: 3,
                     }}>
@@ -326,7 +347,7 @@ function _mapStateToProps (state: Object): Object {
     const _displayName = _localParticipant && getParticipantDisplayName(state, _localParticipantId)
     return {
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
-        _visible: isToolboxVisible(state), // we'll defer to the toolbox
+        _visible: isTakeShotActionButtonVisible(state), // we'll defer to the toolbox
         _takeShotOverlayVisible: isTakeShotOverlayVisible(state), // should we display the overlay?
         _displayName,
         _localParticipantId

@@ -69,7 +69,7 @@ function _endpointMessageReceived (store, next, action) {
         participantId,
         displayName
     } = action
-    store.dispatch(toggleTakeShotAnimation(participantId, displayName))
+    store.dispatch(toggleTakeShotAnimation(participantId, displayName, true))
     sendEvent(
         store,
         EXTERNAL_ACTION_CALL,
