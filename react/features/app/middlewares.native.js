@@ -14,5 +14,6 @@ import '../mobile/wake-lock/middleware';
 import '../mobile/watchos/middleware';
 import '../share-room/middleware';
 import '../youtube-player/middleware';
+import '../take-shot/middleware';
 
 import './middlewares.any';

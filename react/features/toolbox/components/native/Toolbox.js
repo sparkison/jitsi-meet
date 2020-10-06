@@ -118,7 +118,6 @@ class Toolbox extends PureComponent<Props> {
                 <CustomActionCallButton {...this.props}
                     styles = { buttonStyles }
                     callAction={ INVITE_USER_EXTERNAL }
-                    participants={this.props._participants}
                     displayName={this.props._displayName}
                     localParticipantId={this.props._localParticipantId}
                     toggledStyles = { toggledButtonStyles } />
@@ -152,12 +151,11 @@ class Toolbox extends PureComponent<Props> {
  */
 function _mapStateToProps(state: Object): Object {
     const _localParticipant = getLocalParticipant(state);
-    const _localParticipantId = _localParticipant?.id;
+    const _localParticipantId = _localParticipant.id || null
     const _displayName = _localParticipant && getParticipantDisplayName(state, _localParticipantId);
     return {
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
         _visible: isToolboxVisible(state),
-        _participants: state['features/base/participants'],
         _displayName,
         _localParticipantId,
     };

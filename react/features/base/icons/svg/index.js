@@ -111,3 +111,6 @@ export { default as FlipScreen } from './flip-screen.svg';
 export { default as MuteMic } from './mute.svg';
 export { default as UnMuteMic } from './unmute.svg';
 export { default as TakeAShot } from './take-shot.svg';
+export { default as TakeAShotLeft } from './take-shot-left.svg';
+export { default as TakeAShotRight } from './take-shot-right.svg';
+export { default as TakeAShotClank } from './take-shot-clank.svg';

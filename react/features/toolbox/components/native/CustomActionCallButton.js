@@ -21,11 +21,6 @@ type Props = AbstractButtonProps & {
     dispatch: Function,
 
     /**
-     * The local participants
-     */
-    participants: Array<any>,
-
-    /**
      * Display name of user who initiated action
      */
     displayName: string,

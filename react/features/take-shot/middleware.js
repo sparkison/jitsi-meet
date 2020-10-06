@@ -5,6 +5,7 @@ import {MiddlewareRegistry} from '../base/redux'
 import {ENDPOINT_MESSAGE_RECEIVED, TAKE_A_SHOT_PROMPT} from './actionTypes'
 import {sendEvent} from '../mobile/external-api'
 import {EXTERNAL_ACTION_CALL} from '../base/connection'
+import {toggleTakeShotAnimation} from './actions.native'
 
 /**
  * The type of json-message which indicates that json carries a
@@ -64,10 +65,11 @@ function _endpointMessageReceived (store, next, action) {
         return next(action)
     }
     // Send our custom action event (message from another participant)
-    const  {
+    const {
         participantId,
         displayName
     } = action
+    store.dispatch(toggleTakeShotAnimation(participantId, displayName))
     sendEvent(
         store,
         EXTERNAL_ACTION_CALL,

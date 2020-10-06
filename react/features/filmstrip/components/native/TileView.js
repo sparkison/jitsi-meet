@@ -239,6 +239,8 @@ class TileView extends Component<Props> {
     _renderThumbnails() {
         const participantCount = this.props._participants.length;
         const { _height, _width } = this.props
+
+        // Jitsi default
         // const styleOverrides = {
         //     aspectRatio: TILE_ASPECT_RATIO,
         //     flex: 0,

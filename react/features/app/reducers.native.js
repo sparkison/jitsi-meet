@@ -8,5 +8,6 @@ import '../mobile/full-screen/reducer';
 import '../mobile/incoming-call/reducer';
 import '../mobile/watchos/reducer';
 import '../youtube-player/reducer';
+import '../take-shot/reducer';
 
 import './reducers.any';

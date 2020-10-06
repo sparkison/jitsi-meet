@@ -2,7 +2,7 @@
 
 import {ReducerRegistry} from '../base/redux'
 
-import {TAKE_A_SHOT_PROMPT} from './actionTypes'
+import {DISPLAY_TAKE_A_SHOT_ANIMATION, TAKE_A_SHOT_PROMPT} from './actionTypes'
 
 /**
  * Returns initial state for toolbox's part of Redux store.
@@ -14,7 +14,9 @@ import {TAKE_A_SHOT_PROMPT} from './actionTypes'
  */
 function _getInitialState () {
 
-    return { /* ... */ }
+    return {
+        visible: false
+    }
 }
 
 ReducerRegistry.register(
@@ -24,6 +26,10 @@ ReducerRegistry.register(
             case TAKE_A_SHOT_PROMPT:
                 return {
                     ...state
+                }
+            case DISPLAY_TAKE_A_SHOT_ANIMATION:
+                return {
+                    visible: !state.visible // toggle
                 }
         }
 
