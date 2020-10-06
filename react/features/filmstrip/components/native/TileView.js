@@ -251,17 +251,21 @@ class TileView extends Component<Props> {
         const styleOverrides = {
             aspectRatio: participantCount > 2 ? 0.5 : 1,
             height: _height / ratio,
-            width: null
+            width: null,
+            flex: 0
         };
 
         return this._getSortedParticipants()
-            .map(participant => (
+            .map((participant, index) => (
                 <Thumbnail
                     disableTint = { true }
                     key = { participant.id }
                     participant = { participant }
                     renderDisplayName = { true }
-                    styleOverrides = { styleOverrides }
+                    styleOverrides = { participantCount % 2 !== 0 && index + 1 === participantCount ? {
+                        ...styleOverrides,
+                        aspectRatio: 1, // for odd number participants, make the last video 1:1 so it fills
+                    } : styleOverrides }
                     tileView = { true } />));
     }
 

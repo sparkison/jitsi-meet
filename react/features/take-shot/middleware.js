@@ -64,6 +64,10 @@ function _endpointMessageReceived (store, next, action) {
         return next(action)
     }
     // Send our custom action event (message from another participant)
+    const  {
+        participantId,
+        displayName
+    } = action
     sendEvent(
         store,
         EXTERNAL_ACTION_CALL,

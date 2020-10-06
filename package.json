@@ -148,7 +148,9 @@
     "build-ios-sdk": "xcodebuild -workspace ios/jitsi-meet.xcworkspace -scheme JitsiMeet -destination='generic/platform=iOS' -configuration Release archive && open ios/sdk/ && open node_modules/react-native-webrtc/ios",
     "build-android-sdk": "sh ./android/scripts/release-sdk.sh /tmp/jitsi-sdk-maven && open /tmp/jitsi-sdk-maven",
     "ios-sdk-archs": "lipo -info ios/sdk/JitsiMeet.framework",
-    "clean:android": "cd android && ./gradlew clean && cd .."
+    "adb": "adb reverse tcp:8081 tcp:8081",
+    "clean:android": "cd android && ./gradlew clean && cd ..",
+    "install:android": "cd android/ && ./gradlew installDebug && cd .."
   },
   "browser": {
     "jQuery-Impromptu": "jQuery-Impromptu/src/jquery-impromptu.js"

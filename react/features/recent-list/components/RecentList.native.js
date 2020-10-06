@@ -81,6 +81,22 @@ class RecentList extends AbstractRecentList<Props> {
             _defaultServerURL,
             _recentList
         } = this.props;
+
+
+        /**
+         * Add custom meeting for sharing b/w test devices (change this ;) )
+         */
+        const tempConf = {
+            conference: "https://meet.jit.si/b33fa0ad-6cd7-4fbf-a770-7e15c93ec20d",
+            date: (new Date()).getTime(),
+            duration: 0
+        }
+        const hasTemp = _recentList.filter(l => l.conference === tempConf.conference)[0]
+        if (!hasTemp) {
+            _recentList.unshift(tempConf)
+        }
+
+
         const recentList = toDisplayableList(_recentList, t, _defaultServerURL);
         const slideActions = [ {
             backgroundColor: ColorPalette.blue,
