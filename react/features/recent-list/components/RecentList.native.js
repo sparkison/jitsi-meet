@@ -87,7 +87,7 @@ class RecentList extends AbstractRecentList<Props> {
          * Add custom meeting for sharing b/w test devices (change this ;) )
          */
         const tempConf = {
-            conference: "https://meet.jit.si/17c400fb-0c43-436e-a4be-c8d140841f5e",
+            conference: "https://meet.jit.si/899fc8fc-59e5-4e3f-9af7-c03503a583a0",
             date: (new Date()).getTime(),
             duration: 0
         }

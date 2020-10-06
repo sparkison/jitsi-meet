@@ -83,11 +83,10 @@ class TakeShot extends PureComponent<Props> {
             setTimeout(() => {
                 // Hide the overlay
                 this.props.dispatch(toggleTakeShotAnimation(
-                    this.props._localParticipantId,
                     this.props._displayName,
                     false
                 ))
-            }, 2000) // How long before auto-hide the larger overlay?
+            }, 2200) // How long before auto-hide the larger overlay?
         }
     }
 

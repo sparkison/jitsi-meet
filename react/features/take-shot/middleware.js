@@ -6,6 +6,7 @@ import {ENDPOINT_MESSAGE_RECEIVED, TAKE_A_SHOT_PROMPT} from './actionTypes'
 import {sendEvent} from '../mobile/external-api'
 import {EXTERNAL_ACTION_CALL} from '../base/connection'
 import {toggleTakeShotAnimation} from './actions.native'
+import {NOTIFICATION_TIMEOUT, showNotification} from '../notifications'
 
 /**
  * The type of json-message which indicates that json carries a
@@ -13,6 +14,11 @@ import {toggleTakeShotAnimation} from './actions.native'
  */
 const TAKE_SHOT_PROMPT_ACTION = 'take-shot-prompt-result'
 
+// Debounce function/timer
+let showTimer
+
+// Debounce timer
+const debounceTime = 500 // time in milliseconds
 
 /**
  * Middleware which intercepts Toolbox actions to handle changes to the
@@ -22,7 +28,6 @@ const TAKE_SHOT_PROMPT_ACTION = 'take-shot-prompt-result'
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
-
     switch (action.type) {
         case TAKE_A_SHOT_PROMPT: {
             const {
@@ -61,26 +66,61 @@ MiddlewareRegistry.register(store => next => action => {
  */
 function _endpointMessageReceived (store, next, action) {
     const { json } = action
+
+    // Make sure we're responding to the correct action
     if (!(json && json.type === TAKE_SHOT_PROMPT_ACTION)) {
         return next(action)
     }
-    // Send our custom action event (message from another participant)
-    const {
-        participantId,
-        displayName
-    } = action
-    store.dispatch(toggleTakeShotAnimation(participantId, displayName, true))
-    sendEvent(
-        store,
-        EXTERNAL_ACTION_CALL,
-        /* data */ {
-            call: JSON.stringify({
-                action: 'prompted_to_take_shot'
-            }),
-            participantId,
-            displayName
-        })
+
+    // Get variables from the JSON object (see `_showPrompt` function below)
+    const { type, from } = json
+
+    // Debounce the display
+    saveDebounce(store, from)
+
     return next(action)
+}
+
+
+/**
+ *
+ * @param store
+ * @param from
+ */
+const saveDebounce = (store, from: string) => {
+    const { dispatch, getState } = store
+
+    // Clear previous timer
+    if (showTimer) {
+        clearTimeout(showTimer)
+    }
+
+    // Start new one
+    showTimer = setTimeout(() => {
+        // Show take a shot
+        dispatch(toggleTakeShotAnimation(from, true))
+
+        // Display notification
+        dispatch(showNotification({
+            titleArguments: {
+                participantDisplayName: from
+            },
+            titleKey: 'notify.takeAShotTitle'
+        }, NOTIFICATION_TIMEOUT))
+
+        // Send event to external API
+        sendEvent(
+            store,
+            EXTERNAL_ACTION_CALL,
+            /* data */ {
+                call: JSON.stringify({
+                    action: 'prompted_to_take_shot'
+                }),
+                participantId: null,
+                displayName: from
+            })
+
+    }, debounceTime) // delay for bounce time
 }
 
 /**
