@@ -160,7 +160,7 @@ const saveEndpointNotifyDebounce = ({ getState }, from: string) => {
             // Notify all participants
             conference.sendEndpointMessage('', {
                 type: TAKE_SHOT_PROMPT_ACTION,
-                from: action.displayName
+                from
             })
         }
     }, debounceTime * 2) // make this one trigger less often
