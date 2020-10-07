@@ -14,8 +14,9 @@ import {NOTIFICATION_TIMEOUT, showNotification} from '../notifications'
  */
 const TAKE_SHOT_PROMPT_ACTION = 'take-shot-prompt-result'
 
-// Debounce function/timer
+// Debounce functions/timers
 let showTimer
+let messageTimer
 
 // Debounce timer
 const debounceTime = 500 // time in milliseconds
@@ -76,18 +77,19 @@ function _endpointMessageReceived (store, next, action) {
     const { type, from } = json
 
     // Debounce the display
-    saveDebounce(store, from)
+    saveAlertDebounce(store, from)
 
     return next(action)
 }
 
 
 /**
+ * Debounce function to show the "take a shot" alert/animation when received
  *
  * @param store
  * @param from
  */
-const saveDebounce = (store, from: string) => {
+const saveAlertDebounce = (store, from: string) => {
     const { dispatch, getState } = store
 
     // Clear previous timer
@@ -126,21 +128,40 @@ const saveDebounce = (store, from: string) => {
 /**
  * Prompt all participants to take a shot!
  *
- * @param getState
+ * @param store
  * @param next
  * @param action
  * @returns {*}
  * @private
  */
-function _showPrompt ({ getState }, next, action) {
+function _showPrompt (store, next, action) {
+    saveEndpointNotifyDebounce(store, action.displayName)
+    return next(action)
+}
+
+/**
+ * Debounce function to send the "take a shot" message to all participants
+ *
+ * @param store
+ * @param from
+ */
+const saveEndpointNotifyDebounce = ({ getState }, from: string) => {
     const state = getState()
     const { conference } = state['features/base/conference']
-    if (conference) {
-        // Notify all participants
-        conference.sendEndpointMessage('', {
-            type: TAKE_SHOT_PROMPT_ACTION,
-            from: action.displayName
-        })
+
+    // Clear previous timer
+    if (messageTimer) {
+        clearTimeout(messageTimer)
     }
-    return next(action)
+
+    // Start new one
+    messageTimer = setTimeout(() => {
+        if (conference) {
+            // Notify all participants
+            conference.sendEndpointMessage('', {
+                type: TAKE_SHOT_PROMPT_ACTION,
+                from: action.displayName
+            })
+        }
+    }, debounceTime * 2) // make this one trigger less often
 }
