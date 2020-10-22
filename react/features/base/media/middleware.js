@@ -9,7 +9,7 @@ import {
 } from '../../analytics';
 import { APP_STATE_CHANGED } from '../../mobile/background';
 import { SET_AUDIO_ONLY, setAudioOnly } from '../audio-only';
-import { isRoomValid, SET_ROOM } from '../conference';
+import {getCurrentConference, isRoomValid, SET_ROOM} from '../conference'
 import JitsiMeetJS from '../lib-jitsi-meet';
 import { MiddlewareRegistry } from '../redux';
 import { getPropertyValue } from '../settings';
@@ -26,6 +26,7 @@ import {
     _AUDIO_INITIAL_MEDIA_STATE,
     _VIDEO_INITIAL_MEDIA_STATE
 } from './reducer';
+import {SET_AUDIO_MUTED} from './actionTypes'
 
 /**
  * Implements the entry point of the middleware of the feature base/media.
@@ -35,6 +36,23 @@ import {
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+    case SET_AUDIO_MUTED:
+        const conference = getCurrentConference(store.getState)
+        sendEvent(
+            store,
+            EXTERNAL_ACTION_CALL,
+            /* data */ {
+                call: JSON.stringify({
+                    action: "audio_muted",
+                    muted: action.muted,
+                    callUUID: conference
+                        ? conference.callUUID
+                        : null,
+                }),
+                participantId: '',
+                displayName: ''
+            })
+        return next(action);
     case APP_STATE_CHANGED:
         return _appStateChanged(store, next, action);
 
