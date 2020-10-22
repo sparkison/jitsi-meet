@@ -16,7 +16,7 @@ import {
     getConferenceName,
     getCurrentConference
 } from '../../base/conference';
-import { getInviteURL } from '../../base/connection';
+import {EXTERNAL_ACTION_CALL, getInviteURL} from '../../base/connection'
 import {
     MEDIA_TYPE,
     isVideoMutedByAudioOnly,
@@ -34,6 +34,7 @@ import CallKit from './CallKit';
 import ConnectionService from './ConnectionService';
 import { _SET_CALL_INTEGRATION_SUBSCRIPTIONS } from './actionTypes';
 import { isCallIntegrationEnabled } from './functions';
+import {sendEvent} from '../external-api'
 
 const { AudioMode } = NativeModules;
 const CallIntegration = CallKit || ConnectionService;
@@ -44,7 +45,8 @@ const CallIntegration = CallKit || ConnectionService;
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-CallIntegration && MiddlewareRegistry.register(store => next => action => {
+
+MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case _SET_CALL_INTEGRATION_SUBSCRIPTIONS:
         return _setCallKitSubscriptions(store, next, action);
@@ -117,7 +119,9 @@ function _appWillMount({ dispatch, getState }, next, action) {
     };
 
     const subscriptions
-        = CallIntegration.registerSubscriptions(context, delegate);
+        = CallIntegration
+        ? CallIntegration.registerSubscriptions(context, delegate)
+        : null;
 
     subscriptions && dispatch({
         type: _SET_CALL_INTEGRATION_SUBSCRIPTIONS,
@@ -140,7 +144,8 @@ function _appWillMount({ dispatch, getState }, next, action) {
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */
-function _conferenceFailed({ getState }, next, action) {
+function _conferenceFailed(store, next, action) {
+    const { getState } = store
     const result = next(action);
 
     if (!isCallIntegrationEnabled(getState)) {
@@ -155,7 +160,22 @@ function _conferenceFailed({ getState }, next, action) {
 
         if (callUUID) {
             delete action.conference.callUUID;
-            CallIntegration.reportCallFailed(callUUID);
+            if (CallIntegration) {
+                CallIntegration.reportCallFailed(callUUID);
+            } else {
+                sendEvent(
+                    store,
+                    EXTERNAL_ACTION_CALL,
+                    /* data */ {
+                        call: JSON.stringify({
+                            action: "call_integration",
+                            type: "call_failed",
+                            callUUID: callUUID,
+                        }),
+                        participantId: '',
+                        displayName: ''
+                    })
+            }
         }
     }
 
@@ -184,7 +204,7 @@ function _conferenceJoined({ getState }, next, action) {
 
     const { callUUID } = action.conference;
 
-    if (callUUID) {
+    if (CallIntegration && callUUID) {
         CallIntegration.reportConnectedOutgoingCall(callUUID)
             .then(() => {
                 // iOS 13 doesn't like the mute state to be false before the call is started
@@ -220,7 +240,8 @@ function _conferenceJoined({ getState }, next, action) {
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */
-function _conferenceLeft({ getState }, next, action) {
+function _conferenceLeft(store, next, action) {
+    const { getState } = store
     const result = next(action);
 
     if (!isCallIntegrationEnabled(getState)) {
@@ -231,7 +252,22 @@ function _conferenceLeft({ getState }, next, action) {
 
     if (callUUID) {
         delete action.conference.callUUID;
-        CallIntegration.endCall(callUUID);
+        if (CallIntegration) {
+            CallIntegration.endCall(callUUID);
+        } else {
+            sendEvent(
+                store,
+                EXTERNAL_ACTION_CALL,
+                /* data */ {
+                    call: JSON.stringify({
+                        action: "call_integration",
+                        type: "end_call",
+                        callUUID: callUUID,
+                    }),
+                    participantId: '',
+                    displayName: ''
+                })
+        }
     }
 
     return result;
@@ -250,7 +286,8 @@ function _conferenceLeft({ getState }, next, action) {
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */
-function _conferenceWillJoin({ dispatch, getState }, next, action) {
+function _conferenceWillJoin(store, next, action) {
+    const { dispatch, getState } = store
     const result = next(action);
 
     if (!isCallIntegrationEnabled(getState)) {
@@ -273,48 +310,64 @@ function _conferenceWillJoin({ dispatch, getState }, next, action) {
     // it upper cased.
     conference.callUUID = (callUUID || uuid.v4()).toUpperCase();
 
-    CallIntegration.startCall(conference.callUUID, handle, hasVideo)
-        .then(() => {
-            const displayName = getConferenceName(state);
+    if (CallIntegration) {
+        CallIntegration.startCall(conference.callUUID, handle, hasVideo)
+            .then(() => {
+                const displayName = getConferenceName(state);
 
-            CallIntegration.updateCall(
-                conference.callUUID,
-                {
-                    displayName,
-                    hasVideo
-                });
+                CallIntegration.updateCall(
+                    conference.callUUID,
+                    {
+                        displayName,
+                        hasVideo
+                    });
 
-            // iOS 13 doesn't like the mute state to be false before the call is started
-            // so delay it until the conference was joined.
-            if (Platform.OS !== 'ios') {
-                _updateCallIntegrationMuted(conference, state);
-            }
-        })
-        .catch(error => {
-            // Currently this error codes are emitted only by Android.
-            //
-            if (error.code === 'CREATE_OUTGOING_CALL_FAILED') {
-                // We're not tracking the call anymore - it doesn't exist on
-                // the native side.
-                delete conference.callUUID;
-                dispatch(appNavigate(undefined));
-                Alert.alert(
-                    'Call aborted',
-                    'There\'s already another call in progress.'
+                // iOS 13 doesn't like the mute state to be false before the call is started
+                // so delay it until the conference was joined.
+                if (Platform.OS !== 'ios') {
+                    _updateCallIntegrationMuted(conference, state);
+                }
+            })
+            .catch(error => {
+                // Currently this error codes are emitted only by Android.
+                //
+                if (error.code === 'CREATE_OUTGOING_CALL_FAILED') {
+                    // We're not tracking the call anymore - it doesn't exist on
+                    // the native side.
+                    delete conference.callUUID;
+                    dispatch(appNavigate(undefined));
+                    Alert.alert(
+                        'Call aborted',
+                        'There\'s already another call in progress.'
                         + ' Please end it first and try again.',
-                    [
-                        { text: 'OK' }
-                    ],
-                    { cancelable: false });
-            } else {
-                // Some devices fail because the CALL_PHONE permission is not granted, which is
-                // nonsense, because it's not needed for self-managed connections.
-                // Some other devices fail because ConnectionService is not supported.
-                // Be that as it may, fallback to non-ConnectionService audio device handling.
+                        [
+                            { text: 'OK' }
+                        ],
+                        { cancelable: false });
+                } else {
+                    // Some devices fail because the CALL_PHONE permission is not granted, which is
+                    // nonsense, because it's not needed for self-managed connections.
+                    // Some other devices fail because ConnectionService is not supported.
+                    // Be that as it may, fallback to non-ConnectionService audio device handling.
 
-                _handleConnectionServiceFailure(state);
-            }
-        });
+                    _handleConnectionServiceFailure(state);
+                }
+            });
+    } else {
+        sendEvent(
+            store,
+            EXTERNAL_ACTION_CALL,
+            /* data */ {
+                call: JSON.stringify({
+                    action: "call_integration",
+                    type: "start_call",
+                    callUUID: conference.callUUID,
+                    hasVideo
+                }),
+                participantId: '',
+                displayName: ''
+            })
+    }
 
     return result;
 }
@@ -417,9 +470,25 @@ function _setAudioOnly({ getState }, next, action) {
     const conference = getCurrentConference(state);
 
     if (conference && conference.callUUID) {
-        CallIntegration.updateCall(
-            conference.callUUID,
-            { hasVideo: !action.audioOnly });
+        if (CallIntegration) {
+            CallIntegration.updateCall(
+                conference.callUUID,
+                { hasVideo: !action.audioOnly });
+        } else {
+            sendEvent(
+                store,
+                EXTERNAL_ACTION_CALL,
+                /* data */ {
+                    call: JSON.stringify({
+                        action: "call_integration",
+                        type: "update_call",
+                        callUUID: conference.callUUID,
+                        hasVideo: !action.audioOnly
+                    }),
+                    participantId: '',
+                    displayName: ''
+                })
+        }
     }
 
     return result;
@@ -464,27 +533,43 @@ function _setCallKitSubscriptions({ getState }, next, action) {
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */
-function _syncTrackState({ getState }, next, action) {
+function _syncTrackState(store , next, action) {
     const result = next(action);
+    const state = store.getState();
 
-    if (!isCallIntegrationEnabled(getState)) {
+    if (!isCallIntegrationEnabled(store.getState)) {
         return result;
     }
 
     const { jitsiTrack } = action.track;
-    const state = getState();
     const conference = getCurrentConference(state);
 
     if (jitsiTrack.isLocal() && conference && conference.callUUID) {
         switch (jitsiTrack.getType()) {
         case 'audio': {
-            _updateCallIntegrationMuted(conference, state);
+            _updateCallIntegrationMuted(store, conference, state);
             break;
         }
         case 'video': {
-            CallIntegration.updateCall(
-                conference.callUUID,
-                { hasVideo: !isVideoMutedByAudioOnly(state) });
+            if (CallIntegration) {
+                CallIntegration.updateCall(
+                    conference.callUUID,
+                    { hasVideo: !isVideoMutedByAudioOnly(state) });
+            } else {
+                sendEvent(
+                    store,
+                    EXTERNAL_ACTION_CALL,
+                    /* data */ {
+                        call: JSON.stringify({
+                            action: "call_integration",
+                            type: "update_call",
+                            callUUID: conference.callUUID,
+                            hasVideo: !isVideoMutedByAudioOnly(state)
+                        }),
+                        participantId: '',
+                        displayName: ''
+                    })
+            }
             break;
         }
 
@@ -497,13 +582,32 @@ function _syncTrackState({ getState }, next, action) {
 /**
  * Update the muted state in the native side.
  *
+ * @param {Store} store - The redux store in which the specified {@code action}
  * @param {Object} conference - The current active conference.
  * @param {Object} state - The redux store state.
  * @private
  * @returns {void}
  */
-function _updateCallIntegrationMuted(conference, state) {
+function _updateCallIntegrationMuted(store, conference, state) {
     const muted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
 
-    CallIntegration.setMuted(conference.callUUID, muted);
+    __DEV__ && console.log('🔈 audio changed, muted:', muted)
+
+    if (CallIntegration) {
+        CallIntegration.setMuted(conference.callUUID, muted);
+    } else {
+        sendEvent(
+            store,
+            EXTERNAL_ACTION_CALL,
+            /* data */ {
+                call: JSON.stringify({
+                    action: "call_integration",
+                    type: "set_muted",
+                    callUUID: conference.callUUID,
+                    muted: muted
+                }),
+                participantId: '',
+                displayName: ''
+            })
+    }
 }
