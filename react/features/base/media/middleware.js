@@ -9,7 +9,7 @@ import {
 } from '../../analytics';
 import { APP_STATE_CHANGED } from '../../mobile/background';
 import { SET_AUDIO_ONLY, setAudioOnly } from '../audio-only';
-import {getCurrentConference, isRoomValid, SET_ROOM} from '../conference'
+import {getCurrentConference, getRoomName, isRoomValid, SET_ROOM} from '../conference'
 import JitsiMeetJS from '../lib-jitsi-meet';
 import { MiddlewareRegistry } from '../redux';
 import { getPropertyValue } from '../settings';
@@ -26,7 +26,9 @@ import {
     _AUDIO_INITIAL_MEDIA_STATE,
     _VIDEO_INITIAL_MEDIA_STATE
 } from './reducer';
-import {SET_AUDIO_MUTED} from './actionTypes'
+import {SET_AUDIO_MUTED, SET_VIDEO_AVAILABLE} from './actionTypes'
+import {EXTERNAL_ACTION_CALL} from '../connection'
+import {sendEvent} from '../../mobile/external-api'
 
 /**
  * Implements the entry point of the middleware of the feature base/media.
@@ -35,28 +37,58 @@ import {SET_AUDIO_MUTED} from './actionTypes'
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
+    const roomName = getRoomName(store.getState())
     switch (action.type) {
     case SET_AUDIO_MUTED:
-        const conference = getCurrentConference(store.getState)
+        if (roomName) {
+            sendEvent(
+                store,
+                EXTERNAL_ACTION_CALL,
+                /* data */ {
+                    call: JSON.stringify({
+                        action: "audio_muted",
+                        conference: roomName,
+                        muted: action.muted
+                    }),
+                    participantId: '',
+                    displayName: ''
+                })
+        }
+        return next(action);
+
+    case SET_VIDEO_AVAILABLE:
+        if (roomName) {
+            sendEvent(
+                store,
+                EXTERNAL_ACTION_CALL,
+                /* data */ {
+                    call: JSON.stringify({
+                        action: "video_available",
+                        conference: roomName,
+                        available: action.available
+                    }),
+                    participantId: '',
+                    displayName: ''
+                })
+        }
+        return next(action);
+
+    case APP_STATE_CHANGED:
+        return _appStateChanged(store, next, action);
+
+    case SET_AUDIO_ONLY:
         sendEvent(
             store,
             EXTERNAL_ACTION_CALL,
             /* data */ {
                 call: JSON.stringify({
-                    action: "audio_muted",
-                    muted: action.muted,
-                    callUUID: conference
-                        ? conference.callUUID
-                        : null,
+                    action: "audio_only",
+                    conference: roomName,
+                    audioOnly: action.audioOnly
                 }),
                 participantId: '',
                 displayName: ''
             })
-        return next(action);
-    case APP_STATE_CHANGED:
-        return _appStateChanged(store, next, action);
-
-    case SET_AUDIO_ONLY:
         return _setAudioOnly(store, next, action);
 
     case SET_ROOM:
