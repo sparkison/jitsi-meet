@@ -1,6 +1,7 @@
 import { NativeEventEmitter, NativeModules } from 'react-native';
 
-let ConnectionService = NativeModules.ConnectionService;
+// let ConnectionService = NativeModules.ConnectionService;
+let ConnectionService = null;
 
 // XXX Rather than wrapping ConnectionService in a new class and forwarding
 // the many methods of the latter to the former, add the one additional
